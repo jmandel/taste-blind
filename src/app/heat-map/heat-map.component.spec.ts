@@ -11,9 +11,9 @@ describe('HeatMapComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ HeatMapComponent ]
+      declarations: [HeatMapComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

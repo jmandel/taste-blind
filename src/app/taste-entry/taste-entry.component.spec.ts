@@ -11,9 +11,9 @@ describe('TasteEntryComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ TasteEntryComponent ]
+      declarations: [TasteEntryComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

@@ -23,18 +23,18 @@ export class NewTastingComponent {
     this.values = "";
   }
 
-  ready(){
+  ready() {
     if (!this.name) { return false; }
-    if (this.values.split(/,/).map(x=>x.trim()).length < 2) {return false;}
+    if (this.values.split(/,/).map(x => x.trim()).length < 2) { return false; }
     return true;
   }
 
-  save(){
+  save() {
     this.tastings.push({
       name: this.name,
       options: this.values.split(/,/)
-        .map(x=>x.trim())
-        .filter(x=>!!x)
+        .map(x => x.trim())
+        .filter(x => !!x)
         .sort(),
       uid: this.stateService.who.uid,
       open: true

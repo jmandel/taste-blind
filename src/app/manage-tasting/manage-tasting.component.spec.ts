@@ -11,9 +11,9 @@ describe('ManageTastingComponent', () => {
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ ManageTastingComponent ]
+      declarations: [ManageTastingComponent]
     })
-    .compileComponents();
+      .compileComponents();
   }));
 
   beforeEach(() => {

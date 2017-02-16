@@ -22,21 +22,21 @@ export class TasteEntryComponent {
   ngOnChanges() {
     this.recompute();
   }
-  ngOnInit(){
+  ngOnInit() {
     if (!this.decision || this.decision.length == 0) {
-      this.decision = this.tasting.options.map(o=>.05);
+      this.decision = this.tasting.options.map(o => .05);
     }
     this.recompute();
   }
 
-  set(i, event){
+  set(i, event) {
     this.decision[i] = event.value;
     this.recompute();
   }
 
-  recompute(){
-    this.total  = this.decision.reduce((acc, d)=> acc+d, 0);
-    this.score  = this.decision.map(d=>d/(this.total+this.epsilon));
+  recompute() {
+    this.total = this.decision.reduce((acc, d) => acc + d, 0);
+    this.score = this.decision.map(d => d / (this.total + this.epsilon));
     this.onDecision.emit(this.decision)
   }
 }

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, BehaviorSubject }    from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StateService } from '../state.service';
 
@@ -18,89 +18,89 @@ export class ManageTastingComponent {
 
   constructor(
     private stateService: StateService,
-    public route : ActivatedRoute,
+    public route: ActivatedRoute,
   ) {
-      route.params.subscribe(p => {
-         this.stateService
-         .getManageDetails(p["name"])
-         .subscribe((res: any)=>{
-            this.tasting = res.tasting;
-            this.tasting.answers = this.tasting.answers || [];
-            this.tastingList = res.tastingList;
-            this.decisions = res.decisions;
-            this.name = res.name
-            if (!this.tasting.open) {
-                this.scores = this.score();
-            }
-       });
+    route.params.subscribe(p => {
+      this.stateService
+        .getManageDetails(p["name"])
+        .subscribe((res: any) => {
+          this.tasting = res.tasting;
+          this.tasting.answers = this.tasting.answers || [];
+          this.tastingList = res.tastingList;
+          this.decisions = res.decisions;
+          this.name = res.name
+          if (!this.tasting.open) {
+            this.scores = this.score();
+          }
+        });
     });
 
   }
 
-  errors(){
-  if (this.tasting.answers.length !== this.tasting.options.length ||
-      this.tasting.answers.indexOf(-1) !== -1){
+  errors() {
+    if (this.tasting.answers.length !== this.tasting.options.length ||
+      this.tasting.answers.indexOf(-1) !== -1) {
       return "Not all samples have been assigned to a true value";
     }
 
-    var numericAnswers = this.tasting.answers.map(i=>parseInt(i));
+    var numericAnswers = this.tasting.answers.map(i => parseInt(i));
 
     if (this.tasting.options
-         .map((o,i)=>numericAnswers.indexOf(i))
-         .filter(i=>i>-1)
-         .length !== this.tasting.options.length){
-           return "Not all samples have been assigned";
-         }
+      .map((o, i) => numericAnswers.indexOf(i))
+      .filter(i => i > -1)
+      .length !== this.tasting.options.length) {
+      return "Not all samples have been assigned";
+    }
 
     return "";
   }
 
-  productForSample(i: number){
+  productForSample(i: number) {
     return this.tasting.options[i];
   }
 
-  endTasting(){
+  endTasting() {
     this.tasting.answers = Object.keys(this.tasting.options)
-    .map((_, i)=>{
-      var ret = parseInt(this.tasting.answers[i])
-      if (isNaN(ret)) {return -1;}
-      return ret;
-    });
+      .map((_, i) => {
+        var ret = parseInt(this.tasting.answers[i])
+        if (isNaN(ret)) { return -1; }
+        return ret;
+      });
 
     this.tasting.open = false;
     this.scores = this.score();
 
     var update = {
-        open: this.tasting.open,
-        answers: this.tasting.answers
+      open: this.tasting.open,
+      answers: this.tasting.answers
     };
 
     this.tastingList.update(this.tasting.$key, update);
   }
 
-  score() : any{
-    var ret : any;
-    ret =  Object.keys(this.decisions)
-    .filter(x => !x.startsWith("$"))
-    .map(k=> {
-      var ret : any;
-      ret =  {
-        displayName: this.stateService.getDisplayNameFor(k),
-        score: scorePlayer(this.decisions[k], this.tasting.answers)
+  score(): any {
+    var ret: any;
+    ret = Object.keys(this.decisions)
+      .filter(x => !x.startsWith("$"))
+      .map(k => {
+        var ret: any;
+        ret = {
+          displayName: this.stateService.getDisplayNameFor(k),
+          score: scorePlayer(this.decisions[k], this.tasting.answers)
         };
-      return ret;
-    }).concat([{
-      name: "RANDOM CHANCE",
-      score: this.tasting.answers.length * Math.log(1 / this.tasting.answers.length)
-    }]).sort((a, b) => b.score-a.score);
+        return ret;
+      }).concat([{
+        name: "RANDOM CHANCE",
+        score: this.tasting.answers.length * Math.log(1 / this.tasting.answers.length)
+      }]).sort((a, b) => b.score - a.score);
 
     return ret;
   }
 }
 
-function scorePlayer(guessList, answers){
+function scorePlayer(guessList, answers) {
   return guessList
-  .map((guesses, i) => guesses[answers[i]] / guesses.reduce((a,b)=>a+b, 0.00001))
-  .map(g => Math.log(g))
-  .reduce((total, v) => total+v, 0);
+    .map((guesses, i) => guesses[answers[i]] / guesses.reduce((a, b) => a + b, 0.00001))
+    .map(g => Math.log(g))
+    .reduce((total, v) => total + v, 0);
 }

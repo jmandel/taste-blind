@@ -19,29 +19,29 @@ export class ViewTastingComponent {
   af: any;
   constructor(
     private stateService: StateService,
-    public route : ActivatedRoute,
+    public route: ActivatedRoute,
     af: AngularFire) {
-      this.af =af;
-      route.params.subscribe(p => {
-         this.stateService
-         .getTastingAndDecisions(p["name"])
-         .subscribe((res: any)=>{
-            this.who = res.who
-            this.tasting = res.tasting;
-            this.decisions = res.decisions;
-            this.name = p["name"]
-       });
+    this.af = af;
+    route.params.subscribe(p => {
+      this.stateService
+        .getTastingAndDecisions(p["name"])
+        .subscribe((res: any) => {
+          this.who = res.who
+          this.tasting = res.tasting;
+          this.decisions = res.decisions;
+          this.name = p["name"]
+        });
     });
   }
 
-  delete(){
+  delete() {
     this.tastingQuery.remove(this.tasting.$key);
   }
 
-  onUpdate(index, e){
+  onUpdate(index, e) {
     var key = this.tasting.$key;
     var submission: any = this.af.database.object(`/decisions/${key}/${this.who}`);
-    submission.update({[index]: e});
+    submission.update({ [index]: e });
   }
 
 }
