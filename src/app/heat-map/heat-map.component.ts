@@ -107,19 +107,20 @@ export class HeatMapComponent implements OnInit, OnChanges {
     .attr("height",100);
 
     var histogram = cols.append("g")
-    .attr("transform", "translate(35,35) scale(.33)");
+    .attr("transform", "translate(25,25) scale(.5)");
 
     histogram.append("rect").classed("whitey", true)
     .attr("x", 0)
     .attr("y", 0)
     .attr("stroke", "white")
-    .attr("fill-opacity", 0)
+    .attr("fill", "white")
+    .attr("fill-opacity", .1)
     .attr("width", 100)
     .attr("height", 100);
 
     var y = d3.scaleLinear()
         .domain([0, numDeciders])
-        .range([10, 90]);
+        .range([2, 82]);
 
     var x = d3.scaleLinear()
         .domain([0, 5])
@@ -135,7 +136,7 @@ export class HeatMapComponent implements OnInit, OnChanges {
     .append("rect")
     .classed("histbar", true)
     .attr("x", function(d,i){return x(i)})
-    .attr("y", function(d,i){return 95-y(d)})
+    .attr("y", function(d,i){return 92-y(d)})
     .attr("width", 20)
     .attr("height", function(d,i){return y(d)})
     .attr("fill", "#BF8B00");
