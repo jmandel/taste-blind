@@ -42,6 +42,16 @@ export class ManageTastingComponent {
       this.tasting.answers.indexOf(-1) !== -1){
       return "Not all samples have been assigned to a true value";
     }
+
+    var numericAnswers = this.tasting.answers.map(i=>parseInt(i));
+
+    if (this.tasting.options
+         .map((o,i)=>numericAnswers.indexOf(i))
+         .filter(i=>i>-1)
+         .length !== this.tasting.options.length){
+           return "Not all samples have been assigned";
+         }
+
     return "";
   }
 

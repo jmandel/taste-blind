@@ -16,4 +16,5 @@ svg {
 
 div.heatmap-holder {
   margin: 0px;
+  max-width: 1000px;
 }

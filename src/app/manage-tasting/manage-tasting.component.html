@@ -4,14 +4,23 @@
 
   <div *ngIf="tasting && tasting?.open && tasting?.options">
     True values for:
-    <div *ngFor="let option of tasting?.options; let i=index;">
-      Sample {{i | alpha}}:
-      <select [(ngModel)]="tasting.answers[i]">
-        <option value="-1"></option>
-        <option *ngFor="let realValue of tasting?.options; let j=index;" [value]="j">{{realValue}}</option>
+    <div class=""
+      *ngFor="let option of tasting?.options; let i=index;" >
+      <label for="sample1" class="">Sample {{i | alpha}}</label>
+      <select [(ngModel)]="tasting.answers[i]" class="">
+        <option class="" value="-1"></option>
+        <option
+          *ngFor="let realValue of tasting?.options; let j=index;"
+          [value]="j">{{realValue}}</option>
       </select>
     </div>
-    <button [disabled]="errors()" (click)="endTasting()">Stop accepting submissions</button>
+    <br>
+    <button
+        class="mdl-button mdl-button--raised"
+        [disabled]="errors()"
+        (click)="endTasting()">
+        Stop accepting submissions
+      </button>
   </div>
 
   <div *ngIf="tasting && !tasting.open">
