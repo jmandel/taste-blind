@@ -24,24 +24,22 @@ export class HeatMapComponent implements OnInit, OnChanges {
 
 
   redraw(){
-  console.log("Redarw with", this.matrix, this.tasting);
     if (!this.matrix) return;
 
-  var fixedDecisions = {};
-  var tasting = this.tasting;
+    var fixedDecisions = {};
+    var tasting = this.tasting;
 
-  Object.keys(this.decisions).filter(k=>!k.startsWith("$")).forEach(d=> {
-      var decision = this.decisions[d];
-      var fixed = [];
-      fixedDecisions[d] = fixed;
-      for (var foodNum=0;foodNum<this.tasting.options.length;foodNum++){
-        var foodIdx = this.tasting.answers.indexOf(foodNum);
-        var sum = d3.sum(decision[foodIdx]) || .0001;
-        fixed.push(decision[foodIdx].map(p=>p/sum))
-      }
-    });
+    Object.keys(this.decisions).filter(k=>!k.startsWith("$")).forEach(d=> {
+        var decision = this.decisions[d];
+        var fixed = [];
+        fixedDecisions[d] = fixed;
+        for (var foodNum=0;foodNum<this.tasting.options.length;foodNum++){
+            var foodIdx = this.tasting.answers.indexOf(foodNum);
+            var sum = d3.sum(decision[foodIdx]) || .0001;
+            fixed.push(decision[foodIdx].map(p=>p/sum))
+        }
+        });
 
-    console.log("fixed decisions", fixedDecisions);
 
     var decisions = fixedDecisions;
 
@@ -52,9 +50,9 @@ export class HeatMapComponent implements OnInit, OnChanges {
     decisions[Object.keys(decisions)[0]].forEach(function(r){
     var row = [];
     decisionMass.push(row);
-    r.forEach(function(c){
-        row.push([]);
-    });
+        r.forEach(function(c){
+            row.push([]);
+        });
     });
 
     Object.keys(decisions).forEach(function(d){
@@ -65,15 +63,14 @@ export class HeatMapComponent implements OnInit, OnChanges {
         })
     })
     });
+
     var data = decisionMass;
 
     var colorRamp = d3.scaleLinear()
     .domain([0,Object.keys(decisions).length])
     .range(["white" as any,"black" as any]);
-    console.log("color ramp", 0,Object.keys(decisions).length, colorRamp(0), colorRamp(5));
 
     this.matrix.nativeElement.innerHTML = "";
-    console.log("A squareof ", this.matrix.nativeElement.offsetWidth);
     var svg = d3.select(this.matrix.nativeElement);
     svg
       .attr("width", tasting.options.length * 100)
@@ -86,7 +83,6 @@ export class HeatMapComponent implements OnInit, OnChanges {
 
     var cols = rows.selectAll("g.colg").data(function(d, i){
         return d.map(function(cell){
-                console.log("Cellmap", cell);
             return {
             total: cell.reduce(function(a,b){return a+b;}, 0),
             deets: cell,
@@ -97,7 +93,6 @@ export class HeatMapComponent implements OnInit, OnChanges {
         .append("g")
         .classed("colg", true)
         .attr("transform", function(d: any,col){
-            console.log("dji", d, col);
         return "scale(1) translate("+col*100+", "+d.row*100+") ";
     });
 
@@ -134,7 +129,6 @@ export class HeatMapComponent implements OnInit, OnChanges {
     .selectAll("rect.histbar")
     .data(function(d:any, i){
         var ret= d3.histogram().domain([0,1]).thresholds(5)(d.deets);
-        console.log("RET hsitbar", ret);
         return ret.map(function(a){return a.length});
     })
     .enter()
