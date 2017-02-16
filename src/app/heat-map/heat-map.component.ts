@@ -28,57 +28,49 @@ export class HeatMapComponent implements OnInit, OnChanges {
   }
 
   redraw(){
-    if (!this.matrix) return;
 
-    var fixedDecisions = {};
+    var host = this;
     var tasting = this.tasting;
 
-    function orderBySamples(decisionRow){
-      return tasting.answers.map((real, sampleIndex)=>
-        decisionRow[real]);
+    function orderBySampleId(decisionRow){
+      return tasting.answers.map(i=> decisionRow[i]);
     }
 
-    var normalizedDecisions = Object.keys(this.decisions)
+    // Normalize so each tasting has a probability if 1
+    // and re-order so decisions are ordered by sample-number
+    // so the "A,B" confusion probability is at [0][1].
+    var decisions =  Object.keys(this.decisions)
     .filter(k=>!k.startsWith("$"))
     .reduce((acc, person)=>{
        acc[person] = this.decisions[person].map(d=>{
                         var sum = d3.sum(d) + .00001;
-                        return orderBySamples(d).map(p=>p/sum);
+                        return orderBySampleId(d).map(p=>p/sum);
                      });
        return acc;
     }, {});
 
-    var decisions = normalizedDecisions;
-    console.log("ND", this.decisions, decisions);
-
     var numDeciders = Object.keys(decisions).length;
-
     var decisionMass = [];
-
     decisions[Object.keys(decisions)[0]].forEach(function(r){
-    var row = [];
-    decisionMass.push(row);
-        r.forEach(function(c){
-            row.push([]);
-        });
+        var row = [];
+        decisionMass.push(row);
+            r.forEach(function(c){
+                row.push([]);
+            });
     });
 
     Object.keys(decisions).forEach(function(d){
-    var decider = decisions[d];
-    decider.forEach(function(row, i){
-        row.forEach(function(col, j){
-        decisionMass[i][j].push(col);
+        var decider = decisions[d];
+        decider.forEach(function(row, i){
+            row.forEach(function(col, j){
+            decisionMass[i][j].push(col);
+            })
         })
-    })
     });
-
-    var data = decisionMass;
 
     var colorRamp = d3.scaleLinear()
     .domain([0,Object.keys(decisions).length])
     .range(["white" as any,"black" as any]);
-
-    var host = this;
 
     function hostMessage(d, j){
       return "Tasting: " + tasting.options[tasting.answers[d.row]] +
@@ -97,7 +89,7 @@ export class HeatMapComponent implements OnInit, OnChanges {
       .append("g")
       .attr("transform", "scale("+scaleFactor+")");
 
-    var rows = svg.selectAll("g.rowg").data(data)
+    var rows = svg.selectAll("g.rowg").data(decisionMass)
     .enter()
     .append("g")
     .attr("transform", (d, row)=>`translate(0, ${row*100})`)
@@ -145,7 +137,7 @@ export class HeatMapComponent implements OnInit, OnChanges {
     var histogram = cols.append("g")
     .attr("transform", "translate(25,25) scale(.5)");
 
-    histogram.append("rect").classed("whitey", true)
+    histogram.append("rect")
     .attr("x", 0)
     .attr("y", 0)
     .attr("stroke", "white")
