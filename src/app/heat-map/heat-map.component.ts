@@ -10,6 +10,7 @@ import * as d3 from "d3";
 export class HeatMapComponent implements OnInit, OnChanges {
   @Input() tasting;
   @Input() decisions;
+  public message = "";
   @ViewChild("matrix") matrix;
 
   constructor() { }
@@ -22,6 +23,9 @@ export class HeatMapComponent implements OnInit, OnChanges {
     this.redraw();
   }
 
+  onResize() {
+    this.redraw();
+  }
 
   redraw(){
     if (!this.matrix) return;
@@ -29,19 +33,23 @@ export class HeatMapComponent implements OnInit, OnChanges {
     var fixedDecisions = {};
     var tasting = this.tasting;
 
-    Object.keys(this.decisions).filter(k=>!k.startsWith("$")).forEach(d=> {
-        var decision = this.decisions[d];
-        var fixed = [];
-        fixedDecisions[d] = fixed;
-        for (var foodNum=0;foodNum<this.tasting.options.length;foodNum++){
-            var foodIdx = this.tasting.answers.indexOf(foodNum);
-            var sum = d3.sum(decision[foodIdx]) || .0001;
-            fixed.push(decision[foodIdx].map(p=>p/sum))
-        }
-        });
+    function orderBySamples(decisionRow){
+      return tasting.answers.map((real, sampleIndex)=>
+        decisionRow[real]);
+    }
 
+    var normalizedDecisions = Object.keys(this.decisions)
+    .filter(k=>!k.startsWith("$"))
+    .reduce((acc, person)=>{
+       acc[person] = this.decisions[person].map(d=>{
+                        var sum = d3.sum(d) + .00001;
+                        return orderBySamples(d).map(p=>p/sum);
+                     });
+       return acc;
+    }, {});
 
-    var decisions = fixedDecisions;
+    var decisions = normalizedDecisions;
+    console.log("ND", this.decisions, decisions);
 
     var numDeciders = Object.keys(decisions).length;
 
@@ -70,16 +78,42 @@ export class HeatMapComponent implements OnInit, OnChanges {
     .domain([0,Object.keys(decisions).length])
     .range(["white" as any,"black" as any]);
 
+    var host = this;
+
+    function hostMessage(d, j){
+      return "Tasting: " + tasting.options[tasting.answers[d.row]] +
+           ", \nGuessing: " + tasting.options[tasting.answers[j]] +
+           ", \nProbability mass: " + d.total.toFixed(2)+"\n";
+    }
+
+    var width = this.matrix.nativeElement.getBoundingClientRect().width;
+    var virtualWidth = 200 * tasting.options.length;
+    var scaleFactor = width / virtualWidth;
+
     this.matrix.nativeElement.innerHTML = "";
-    var svg = d3.select(this.matrix.nativeElement);
-    svg
-      .attr("width", tasting.options.length * 100)
-      .attr("height", tasting.options.length * 100);
+    var svg = d3.select(this.matrix.nativeElement)
+      .attr("width", width)
+      .attr("height", width)
+      .append("g")
+      .attr("transform", "scale("+scaleFactor+")");
 
     var rows = svg.selectAll("g.rowg").data(data)
     .enter()
     .append("g")
+    .attr("transform", (d, row)=>`translate(0, ${row*100})`)
+    .attr("class", (d,row)=>`rownum-${row}`)
     .classed("rowg", true);
+
+    rows.append("g")
+      .attr("transform", `translate(${virtualWidth / 2 + 5}, 50)`)
+      .append("text")
+      .text((d, row)=>host.tasting.options[tasting.answers[row]] + " (tasted)");
+
+    rows.append("g")
+    .attr("transform", (d,row)=>
+      `translate(${50 + row*100}, ${5 + virtualWidth/2 - 100*row}) rotate(90)`)
+      .append("text")
+      .text((d, row)=>host.tasting.options[tasting.answers[row]] + " (guessed)");
 
     var cols = rows.selectAll("g.colg").data(function(d, i){
         return d.map(function(cell){
@@ -93,8 +127,10 @@ export class HeatMapComponent implements OnInit, OnChanges {
         .append("g")
         .classed("colg", true)
         .attr("transform", function(d: any,col){
-        return "scale(1) translate("+col*100+", "+d.row*100+") ";
-    });
+            return `translate(${col*100}, 0 )`;
+        }).on("click mouseover touch", function(d, j){
+          host.message = hostMessage(d, j);
+        });
 
     var boxes = cols
     .append("rect")
@@ -144,9 +180,7 @@ export class HeatMapComponent implements OnInit, OnChanges {
     svg.selectAll("g.rowg").selectAll("g.colg")
     .append("title")
     .text(function(d:any,j){
-    return "Tasting: " + tasting.options[d.row] +
-           "\nGuessing: " + tasting.options[j] +
-           "\nProbability mass: " + d.total.toFixed(2)+"\n";
+    return hostMessage(d, j);
     })
 
   }

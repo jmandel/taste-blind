@@ -32,7 +32,7 @@ export class NewTastingComponent {
   save(){
     this.tastings.push({
       name: this.name,
-      options: this.values.split(/,/).map(x=>x.trim()),
+      options: this.values.split(/,/).map(x=>x.trim()).sort(),
       uid: this.stateService.who.uid,
       open: true
     })

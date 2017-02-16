@@ -24,15 +24,32 @@
       </thead>
       <tbody>
         <tr *ngFor="let player of scores">
-          <td class="mdl-data-table__cell--non-numeric">{{(player.displayName | async)?.$value}}</td>
+          <td class="mdl-data-table__cell--non-numeric">{{player?.name || (player.displayName | async)?.$value}}</td>
           <td>{{player.score}}</td>
+        </tr>
+      </tbody>
+    </table>
+    <br>
+
+    <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+      <thead>
+        <tr>
+          <th class="mdl-data-table__cell--non-numeric">Sample Label</th>
+          <th class="mdl-data-table__cell--non-numeric">Correct Answer</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let sampleTruth of tasting.answers; let sample = index;">
+          <td class="mdl-data-table__cell--non-numeric">{{sample | alpha}}</td>
+          <td class="mdl-data-table__cell--non-numeric">{{productForSample(sampleTruth)}}</td>
         </tr>
       </tbody>
     </table>
 
     <app-heat-map
       [tasting]="tasting"
-      [decisions]="decisions"></app-heat-map>
+      [decisions]="decisions"
+      ></app-heat-map>
 
   </div>
 </div>

@@ -1,3 +1,8 @@
-<h2>Heat map of guesses for {{tasting?.name}}</h2>
+<h2>Confusion Matrix</h2>
+<div class="heatmap-holder mdl-cell mdl-cell--12-col mdl-cell--4-col-phone">
+  {{message || "Hover or tap for details"}}
+  <svg #matrix
+      (window:resize)="onResize($event)"
+    ></svg>
+</div>
 
-<svg #matrix></svg>

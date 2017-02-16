@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-
+import { Observable, BehaviorSubject }    from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { StateService } from '../state.service';
 
@@ -45,6 +45,10 @@ export class ManageTastingComponent {
     return "";
   }
 
+  productForSample(i: number){
+    return this.tasting.options[i];
+  }
+
   endTasting(){
     this.tasting.answers = Object.keys(this.tasting.options)
     .map((_, i)=>{
@@ -64,15 +68,23 @@ export class ManageTastingComponent {
     this.tastingList.update(this.tasting.$key, update);
   }
 
-  score(){
-    return Object.keys(this.decisions)
+  score() : any{
+    var ret : any;
+    ret =  Object.keys(this.decisions)
     .filter(x => !x.startsWith("$"))
     .map(k=> {
-      return {
+      var ret : any;
+      ret =  {
         displayName: this.stateService.getDisplayNameFor(k),
         score: scorePlayer(this.decisions[k], this.tasting.answers)
-      }
-    }).sort((a, b) => b.score-a.score);
+        };
+      return ret;
+    }).concat([{
+      name: "RANDOM CHANCE",
+      score: this.tasting.answers.length * Math.log(1 / this.tasting.answers.length)
+    }]).sort((a, b) => b.score-a.score);
+
+    return ret;
   }
 }
 

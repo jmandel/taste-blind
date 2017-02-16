@@ -13,3 +13,7 @@ ul.outer {
 svg {
   width: 100%;
 }
+
+div.heatmap-holder {
+  margin: 0px;
+}
