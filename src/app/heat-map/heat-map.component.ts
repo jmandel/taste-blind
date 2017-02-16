@@ -149,30 +149,10 @@ export class HeatMapComponent implements OnInit, OnChanges {
     svg.selectAll("g.rowg").selectAll("g.colg")
     .append("title")
     .text(function(d:any,j){
-    return "Tasting " + tasting.options[d.row] + "\nGuessing " +
-            tasting.options[j] + "\nProbability mass:" + d.total.toFixed(2)+"\n";
+    return "Tasting: " + tasting.options[d.row] +
+           "\nGuessing: " + tasting.options[j] +
+           "\nProbability mass: " + d.total.toFixed(2)+"\n";
     })
 
-  }
-
-  // For sample i, how much weight was given to option j?
-  guessesFor(i: number, j: number){
-    var decisionKeys = Object.keys(this.decisions).filter(x=>!x.startsWith("$"));
-    var decisions = decisionKeys.map(d=>
-      this.decisions[d].map(dsample=>
-        dsample.map(doption => 
-        doption / dsample.reduce((a,b)=>a+b,0))));
-
-    return {
-      name: this.tasting.options[j],
-      correct: this.tasting.answers[i] == j,
-      diagnostic: decisions.map(d=>d[i][j]),
-      count: decisions.map(d=>d[i].filter(dsample=>dsample < d[i][j]).length)
-        .filter(l=>l == this.tasting.options.length -1)
-        .length,
-      average: decisions
-        .map(d=>d[i][j])
-        .reduce((a, b)=> a+b, 0) / decisionKeys.length
-    };
   }
 }
