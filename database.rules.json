@@ -1,0 +1,23 @@
+{
+  "rules": {
+    ".read": true,
+    "users": {
+      "$uid": {
+        ".write": "auth != null && auth.uid == $uid"
+      }
+    },
+    "tastings": {
+      "$tastingId": {
+        ".indexOn": "name",
+        ".write": "auth != null"
+      }
+    },
+    "decisions": {
+      "$tasting": {
+        "$uid": {
+          ".write": "auth.uid == $uid"
+        }
+      }
+    }
+  }
+}

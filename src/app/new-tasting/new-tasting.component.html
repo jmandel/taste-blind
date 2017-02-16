@@ -1,0 +1,15 @@
+<h3>New Tasting!</h3>
+<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+  <input class="mdl-textfield__input" type="text" placeholder="Single-origin Chocolates"
+  [(ngModel)]="name">
+</div>
+<div class="mdl-textfield mdl-js-textfield">
+  <input class="mdl-textfield__input" type="text" placeholder="Ecuador, Tanzania, Phillipines"
+  [(ngModel)]="values">
+</div>
+
+<button class="mdl-button"
+  type="submit" 
+  (click)="save()"
+  [disabled]="!ready()"> Create it </button>
+

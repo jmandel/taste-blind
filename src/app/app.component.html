@@ -1,0 +1,43 @@
+<div class="mdl-grid">
+
+  <h1 class="welcome">
+    Blind Tasting
+  </h1>
+
+  <div class="mdl-cell mdl-cell--12-col">
+    <div *ngIf="(stateService.auth | async)?.uid">
+      Welcome, {{ (stateService.af.auth | async)?.auth.displayName }}
+    </div>
+    <button class="mdl-button mdl-js-button mdl-button--raised"
+      *ngIf="stateService.who &&  !stateService.who.uid" (click)="login()">
+      Login
+    </button>
+    <button class="mdl-button mdl-js-button mdl-button--raised"
+      *ngIf="(stateService.af.auth | async)" (click)="logout()">
+      Logout
+    </button>
+
+    <span *ngIf="(stateService.af.auth | async)">
+    <button class="mdl-button mdl-js-button mdl-button--raised"
+      routerLink="/create">Create</button>
+
+
+      <button class="mdl-button mdl-js-button mdl-button--raised" [mdMenuTriggerFor]="manageMenu">Manage</button>
+      <button class="mdl-button mdl-js-button mdl-button--raised" [mdMenuTriggerFor]="tasteMenu">Taste!</button>
+      <md-menu #manageMenu="mdMenu">
+        <button
+          *ngFor="let tasting of tastings | async"
+          md-menu-item routerLink="/manage/{{tasting.name}}">{{tasting.name}}</button>
+      </md-menu>
+      <md-menu #tasteMenu="mdMenu">
+        <button
+          *ngFor="let tasting of tastings | async"
+          md-menu-item routerLink="/taste/{{tasting.name}}">{{tasting.name}}</button>
+      </md-menu>
+
+    </span>
+
+    <router-outlet ></router-outlet>
+
+  </div>
+</div>

@@ -1,0 +1,20 @@
+<div class="mdl-card__actions mdl-card--border">
+  <h3>
+    Consider sample {{sample | alpha}}
+  </h3>
+</div>
+
+<div *ngFor="let option of tasting.options; let i = index;"
+  class="mdl-grid">
+
+  <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-phone taste-option">
+    {{option}}
+  </div>
+  <div class="mdl-cell mdl-cell--12-col mdl-cell--4-col-phone">
+    <md-slider
+      [disabled]="tasting && !tasting.open"
+      width="100%" min="0" max="1" step="0.01" [value]="decision[i]" (change)="set(i, $event)"> </md-slider>
+
+    {{score[i] | percent:'2.0-0'}}
+
+  </div>

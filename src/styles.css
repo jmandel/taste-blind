@@ -1,0 +1,21 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import '~@angular/material/core/theming/prebuilt/deeppurple-amber.css';
+
+.md-slider-horizontal {
+  width: 75%;
+}
+.taste-option {
+  text-align: left;
+  margin-left:2em;
+  margin-bottom:-2em;
+  font-weight: bold;
+}
+
+h1.welcome {
+margin-bottom: 0em;
+}
+
+view-tasting {
+  width: 100%;
+}

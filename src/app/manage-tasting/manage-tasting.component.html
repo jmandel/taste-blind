@@ -1,0 +1,38 @@
+<div class="md-grid"
+  *ngIf="stateService.af.auth | async" >
+  <h2>Manage: {{tasting?.name}}</h2>
+
+  <div *ngIf="tasting && tasting?.open && tasting?.options">
+    True values for:
+    <div *ngFor="let option of tasting?.options; let i=index;">
+      Sample {{i | alpha}}:
+      <select [(ngModel)]="tasting.answers[i]">
+        <option value="-1"></option>
+        <option *ngFor="let realValue of tasting?.options; let j=index;" [value]="j">{{realValue}}</option>
+      </select>
+    </div>
+    <button [disabled]="errors()" (click)="endTasting()">Stop accepting submissions</button>
+  </div>
+
+  <div *ngIf="tasting && !tasting.open">
+    <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+      <thead>
+        <tr>
+          <th class="mdl-data-table__cell--non-numeric">Player</th>
+          <th>Score</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let player of scores">
+          <td class="mdl-data-table__cell--non-numeric">{{(player.displayName | async)?.$value}}</td>
+          <td>{{player.score}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <app-heat-map
+      [tasting]="tasting"
+      [decisions]="decisions"></app-heat-map>
+
+  </div>
+</div>

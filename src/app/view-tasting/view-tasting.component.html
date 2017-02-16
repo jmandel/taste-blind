@@ -1,0 +1,11 @@
+<div *ngIf="tasting && !tasting.open">
+  <h3>Tasting is closed</h3>
+  <a [routerLink]="['/manage', name]">View results</a>
+</div>
+<div *ngIf="decisions">
+  <taste-entry *ngFor="let option of tasting?.options; let i = index;"
+    [tasting]="tasting"
+    [decision]="decisions && decisions[i] || []"
+    [sample]="i"
+    (onDecision)="onUpdate(i, $event)"></taste-entry>
+</div>

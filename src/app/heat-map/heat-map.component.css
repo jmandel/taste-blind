@@ -1,0 +1,15 @@
+li {
+  list-style-type: none;
+}
+
+.correct {
+  color: green;
+}
+
+ul.outer {
+  padding-left: 0px;
+}
+
+svg {
+  width: 100%;
+}
