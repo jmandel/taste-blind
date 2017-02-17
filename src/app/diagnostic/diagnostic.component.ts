@@ -31,10 +31,13 @@ export class DiagnosticComponent implements OnInit {
     var host = this;
 
     var width = this.matrix.nativeElement.getBoundingClientRect().width;
+    var height = Math.min(width*2,800);
+    width = height / 2;
+
     var virtualWidth = 100;
-    var virtualHeight = 100;
+    var virtualHeight = 200;
     var scaleFactorWidth = width / virtualWidth;
-    var scaleFactorHeight = width / virtualHeight;
+    var scaleFactorHeight = height / virtualHeight;
 
     var numOptions = this.tasting.options.length;
 
