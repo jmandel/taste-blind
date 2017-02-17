@@ -31,7 +31,7 @@ export class DiagnosticComponent implements OnInit {
     var host = this;
 
     var width = this.matrix.nativeElement.getBoundingClientRect().width;
-    var height = Math.min(width*2,800);
+    var height = Math.min(width*2,600);
     width = height / 2;
 
     var virtualWidth = 100;
@@ -61,7 +61,7 @@ export class DiagnosticComponent implements OnInit {
 
     d3.select(this.matrix.nativeElement)
       .attr("width", width)
-      .attr("height", width*2);
+      .attr("height", height);
 
     var svg = d3.select(this.matrix.nativeElement)
       .select("g.root")

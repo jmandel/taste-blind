@@ -8,6 +8,5 @@ svg {
 }
 
 .diagnostic-holder {
-  max-width: 500;
-  max-height: 500;
+  max-width: 300px;
 }
