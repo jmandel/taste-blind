@@ -41,13 +41,12 @@ export class DiagnosticComponent implements OnInit {
 
     var numOptions = this.tasting.options.length;
 
-    // Normalize so each tasting has a probability if 1
-    // and re-order so decisions are ordered by sample-number
-    // so the "A,B" confusion probability is at [0][1].
     var numDeciders =  Object.keys(this.decisions)
       .filter(k => !k.startsWith("$"))
       .length;
- 
+
+    // flatten all decisions into a single distribution
+    // after normalizing within-response
     var decisions = Object.keys(this.decisions)
       .filter(k => !k.startsWith("$"))
       .map(person=>this.decisions[person].map(d=>{
@@ -92,11 +91,12 @@ export class DiagnosticComponent implements OnInit {
         .attr("font-size", "5")
         .attr("y", "7")
         .attr("x", "0")
-        .text((d, i)=> `${i*5}%`);
+        .text((d, i)=> `${5+i*5}%`);
 
     newRows
         .merge(rows)
         .select("rect")
+        .transition()
         .attr("width", d=>x(d));
 
   }
