@@ -21,6 +21,11 @@
         (click)="endTasting()">
         Stop accepting submissions
       </button>
+
+    <app-diagnostic
+      [tasting]="tasting"
+      [decisions]="decisions"></app-diagnostic>
+
   </div>
 
   <div *ngIf="tasting && !tasting.open">

@@ -17,6 +17,7 @@ import { ViewTastingComponent } from './view-tasting/view-tasting.component';
 import { NewTastingComponent } from './new-tasting/new-tasting.component';
 import { TasteEntryComponent } from './taste-entry/taste-entry.component';
 import { HeatMapComponent } from './heat-map/heat-map.component';
+import { DiagnosticComponent } from './diagnostic/diagnostic.component';
 
 
 // Must export the config
@@ -47,7 +48,7 @@ const appRoutes: Routes = [
     AngularFireModule.initializeApp(firebaseConfig, firebaseAuthConfig),
     RouterModule.forRoot(appRoutes)
   ],
-  declarations: [ AppComponent, NewTastingComponent, ViewTastingComponent, AlphaPipe, ManageTastingComponent, ViewTastingComponent, TasteEntryComponent, HeatMapComponent,],
+  declarations: [ AppComponent, NewTastingComponent, ViewTastingComponent, AlphaPipe, ManageTastingComponent, ViewTastingComponent, TasteEntryComponent, HeatMapComponent, DiagnosticComponent,],
   bootstrap: [ AppComponent ]
 })
 
