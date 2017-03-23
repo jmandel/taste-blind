@@ -12,9 +12,12 @@ export class ManageTastingComponent {
   public decisions: any;
   public name: string;
   public scores: any[];
+  public users: any;
   public winner: string;
   public tasting: any;
+  public checkedUsers: any;
   private tastingList: any;
+  private trigger = 0;
 
   constructor(
     private stateService: StateService,
@@ -29,12 +32,45 @@ export class ManageTastingComponent {
           this.tastingList = res.tastingList;
           this.decisions = res.decisions;
           this.name = res.name
+          this.users = Object.keys(this.decisions)
+                       .filter(k=>!k.startsWith("$"))
+                       .reduce((acc,uid)=>{
+                         acc[uid] = this.stateService.getDisplayNameFor(uid);
+                         return acc;
+                       }, {});
+
+          this.checkedUsers = {};
+          Object.keys(this.users).forEach(u=>{
+            this.checkedUsers[u] = true;
+          });
           if (!this.tasting.open) {
             this.scores = this.score();
           }
         });
     });
 
+  }
+
+  allActive(){
+    Object.keys(this.checkedUsers).forEach(uid=>this.checkedUsers[uid] = true)
+    this.logChange()
+  }
+
+  noneActive(){
+    Object.keys(this.checkedUsers).forEach(uid=>this.checkedUsers[uid] = false)
+    this.logChange()
+  }
+
+  logChange(){
+    console.log("CHange!", this.checkedUsers);
+    this.trigger += 1;
+  }
+
+  toggle(player){
+    if(player.uid){
+        this.checkedUsers[player.uid] = !this.checkedUsers[player.uid];
+        this.trigger += 1;
+    }
   }
 
   errors() {
@@ -85,6 +121,7 @@ export class ManageTastingComponent {
       .map(k => {
         var ret: any;
         ret = {
+          uid: k,
           displayName: this.stateService.getDisplayNameFor(k),
           score: scorePlayer(this.decisions[k], this.tasting.answers)
         };

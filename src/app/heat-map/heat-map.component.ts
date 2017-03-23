@@ -10,17 +10,24 @@ import * as d3 from "d3";
 export class HeatMapComponent implements OnInit, OnChanges {
   @Input() tasting;
   @Input() decisions;
+  @Input() users;
+  @Input() trigger;
+  public activeUsers = [];
   public message = "";
   @ViewChild("matrix") matrix;
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit() {
+    this.activeUsers = Object.keys(this.users).filter(u=>this.users[u]);
+    console.log("INIT", this.activeUsers);
     this.redraw();
   }
 
   ngOnChanges() {
-    this.redraw();
+    console.log("CHANGE", this.users);
+    this.ngOnInit();
   }
 
   onResize() {
@@ -32,15 +39,32 @@ export class HeatMapComponent implements OnInit, OnChanges {
     var host = this;
     var tasting = this.tasting;
 
+    var width = this.matrix.nativeElement.getBoundingClientRect().width;
+    var virtualWidth = 200 * tasting.options.length;
+    var scaleFactor = width / virtualWidth;
+
+    this.matrix.nativeElement.innerHTML = "";
+    var svg = d3.select(this.matrix.nativeElement)
+      .attr("width", width)
+      .attr("height", width)
+      .append("g")
+      .attr("transform", "scale(" + scaleFactor + ")");
+
+
     function orderBySampleId(decisionRow) {
       return tasting.answers.map(i => decisionRow[i]);
     }
 
+
     // Normalize so each tasting has a probability if 1
     // and re-order so decisions are ordered by sample-number
     // so the "A,B" confusion probability is at [0][1].
+    if (this.activeUsers.length === 0){
+      return;
+    }
     var decisions = Object.keys(this.decisions)
       .filter(k => !k.startsWith("$"))
+      .filter(k => host.activeUsers.indexOf(k) !== -1)
       .reduce((acc, person) => {
         acc[person] = this.decisions[person].map(d => {
           var sum = d3.sum(d) + .00001;
@@ -78,16 +102,6 @@ export class HeatMapComponent implements OnInit, OnChanges {
         ", \nProbability mass: " + d.total.toFixed(2) + "\n";
     }
 
-    var width = this.matrix.nativeElement.getBoundingClientRect().width;
-    var virtualWidth = 200 * tasting.options.length;
-    var scaleFactor = width / virtualWidth;
-
-    this.matrix.nativeElement.innerHTML = "";
-    var svg = d3.select(this.matrix.nativeElement)
-      .attr("width", width)
-      .attr("height", width)
-      .append("g")
-      .attr("transform", "scale(" + scaleFactor + ")");
 
     var rows = svg.selectAll("g.rowg").data(decisionMass)
       .enter()

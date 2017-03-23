@@ -29,21 +29,6 @@
   </div>
 
   <div *ngIf="tasting && !tasting.open">
-    <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
-      <thead>
-        <tr>
-          <th class="mdl-data-table__cell--non-numeric">Player</th>
-          <th>Score</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let player of scores">
-          <td class="mdl-data-table__cell--non-numeric">{{player?.name || (player.displayName | async)?.$value}}</td>
-          <td>{{player.score}}</td>
-        </tr>
-      </tbody>
-    </table>
-    <br>
 
     <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
       <thead>
@@ -59,10 +44,37 @@
         </tr>
       </tbody>
     </table>
-
+    <br>
+    <table class="mdl-data-table mdl-js-data-table mdl-data-table--selectable mdl-shadow--2dp">
+      <thead>
+        <tr>
+          <th class="mdl-data-table__cell--non-numeric">Player</th>
+          <th>Score</th>
+          <th>Show in matrix? 
+<button class="mdl-button" (click)="allActive()">all</button>
+<button class="mdl-button" (click)="noneActive()">none</button>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let player of scores"
+          (click)="toggle(player)"
+          >
+          <td class="mdl-data-table__cell--non-numeric">{{player?.name || (player.displayName | async)?.$value}}</td>
+          <td>{{player.score}}</td>
+          <td>
+            <input *ngIf="player.uid" type="checkbox"
+              (change)="logChange()"
+              [(ngModel)]="checkedUsers[player.uid]">
+          </td>
+        </tr>
+      </tbody>
+    </table>
     <app-heat-map
       [tasting]="tasting"
       [decisions]="decisions"
+      [users]="checkedUsers"
+      [trigger]="trigger"
       ></app-heat-map>
 
   </div>
